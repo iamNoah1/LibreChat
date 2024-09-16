@@ -17,6 +17,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Debug - List helmchart contents
+        run: |
+          echo "Contents of helmchart directory:"
+          ls -R helmchart
+            
       - name: Configure Git
         run: |
           git config user.name "$GITHUB_ACTOR"
