@@ -1,10 +1,9 @@
-name: Build Helm Charts on Tag
+name: Release Charts
 
-# The workflow is triggered when a tag is pushed
 on:
   push:
     tags:
-      - "*"
+      - '*'
   workflow_dispatch:
     inputs:
       version:
@@ -14,29 +13,27 @@ on:
 
 jobs:
   release:
+    runs-on: ubuntu-latest
     permissions:
       contents: write
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Debug - List helmchart contents
-        run: |
-          echo "Contents of helmchart directory:"
-          ls -R helmchart
-            
       - name: Configure Git
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Install Helm
-        uses: azure/setup-helm@v4
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"       
+        uses: azure/setup-helm@v3
+
+      - name: Debug - List helmchart contents
+        run: |
+          echo "Contents of helmchart directory:"
+          ls -R helmchart
 
       - name: Debug - Print Chart Version
         run: |
@@ -45,7 +42,15 @@ jobs:
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
-        with:
-          charts_dir: helmchart
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          charts_dir: helmchart
+          config: cr.yaml
+
+      - name: Force release if needed
+        if: failure()
+        run: |
+          cr package helmchart
+          cr upload --skip-existing
+          cr index --push
