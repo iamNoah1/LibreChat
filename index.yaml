@@ -1,0 +1,12 @@
+apiVersion: v1
+entries:
+  librechat:
+  - apiVersion: v2
+    created: "2024-09-16T17:39:30.036911039Z"
+    digest: 62ad311f7685ddb492634eb9836b6197d8393fd631187fd506bfedf23ad846f5
+    name: librechat
+    type: application
+    urls:
+    - https://github.com/iamNoah1/LibreChat/releases/download/librechat-1.0.4/librechat-1.0.4.tgz
+    version: 1.0.4
+generated: "2024-09-16T17:39:30.037025302Z"
